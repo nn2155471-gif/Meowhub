@@ -11,8 +11,9 @@ BT.Active,BT.Draggable=true,true;
 local BL=Instance.new("TextLabel",BT);
 BL.Size,BL.BackgroundTransparency,BL.Text,BL.TextColor3,BL.TextSize,BL.Font=UDim2.new(1,0,1,0),true,"M",Color3.fromRGB(255,40,90),22,Enum.Font.GothamBold;
 
+-- Đã tăng chiều cao của Frame từ 340 lên 420 để chứa vừa vặn các nút bấm
 local MF=Instance.new("Frame",SG);
-MF.Size,MF.Position,MF.BackgroundColor3,MF.Active,MF.Draggable=UDim2.new(0,260,0,390),UDim2.new(0.05,0,0.2,0),Color3.fromRGB(12,12,16),true,true;
+MF.Size,MF.Position,MF.BackgroundColor3,MF.Active,MF.Draggable=UDim2.new(0,260,0,420),UDim2.new(0.05,0,0.2,0),Color3.fromRGB(12,12,16),true,true;
 MF.BorderSizePixel=0;MF.Visible=false;
 local MFC=Instance.new("UICorner",MF);MFC.CornerRadius=UDim.new(0,10);
 local MFSt=Instance.new("UIStroke",MF);MFSt.Color,MFSt.Thickness=Color3.fromRGB(0,255,150),2;
@@ -36,17 +37,18 @@ local TC=Instance.new("UICorner",T);TC.CornerRadius=UDim.new(0,10);
 local ST=Instance.new("TextLabel",MF);
 ST.Size,ST.Position,ST.BackgroundTransparency,ST.Text,ST.TextColor3,ST.TextSize,ST.Font,ST.TextXAlignment=UDim2.new(1,-20,0,25),UDim2.new(0,10,0,42),true,"🎯 Đang chọn: Chưa chọn",Color3.fromRGB(255,215,0),12,Enum.Font.Gotham,Enum.TextXAlignment.Left;
 
+-- Giảm chiều cao ScrollingFrame một chút để nhường chỗ cho các nút phía dưới
 local SL=Instance.new("ScrollingFrame",MF);
-SL.Size,SL.Position,SL.BackgroundColor3,SL.BorderSizePixel,SL.CanvasSize,SL.ScrollBarThickness=UDim2.new(1,-20,0,160),UDim2.new(0,10,0,72),Color3.fromRGB(18,18,24),0,UDim2.new(0,0,0,0),4;
+SL.Size,SL.Position,SL.BackgroundColor3,SL.BorderSizePixel,SL.CanvasSize,SL.ScrollBarThickness=UDim2.new(1,-20,0,180),UDim2.new(0,10,0,72),Color3.fromRGB(18,18,24),0,UDim2.new(0,0,0,0),4;
 local SLC=Instance.new("UICorner",SL);SLC.CornerRadius=UDim.new(0,6);
 local UIL=Instance.new("UIListLayout",SL);UIL.SortOrder,UIL.Padding=Enum.SortOrder.LayoutOrder,UDim.new(0,4);
 
--- Nút Trạng Thái Bám Theo (Lock Target)
+-- Nút Trạng Thái Bám Theo (Lock Target) nằm ngay dưới danh sách
 local TB=Instance.new("TextButton",MF);
-TB.Size,TB.Position,TB.Text,TB.TextColor3,TB.TextSize,TB.Font,TB.BackgroundColor3,TB.BorderSizePixel=UDim2.new(1,-20,0,38),UDim2.new(0,10,1,-95),"⚡ BÁM THEO: TẮT",Color3.fromRGB(255,255,255),12,Enum.Font.GothamBold,Color3.fromRGB(220,40,40),0;
+TB.Size,TB.Position,TB.Text,TB.TextColor3,TB.TextSize,TB.Font,TB.BackgroundColor3,TB.BorderSizePixel=UDim2.new(1,-20,0,38),UDim2.new(0,10,1,-96),"⚡ BÁM THEO: TẮT",Color3.fromRGB(255,255,255),12,Enum.Font.GothamBold,Color3.fromRGB(220,40,40),0;
 local TBC=Instance.new("UICorner",TB);TBC.CornerRadius=UDim.new(0,8);
 
--- Nút Trạng Thái Tàng Hình Mới (Invisibility Toggle)
+-- Nút Trạng Thái Tàng Hình nằm ở đáy bảng
 local IVB=Instance.new("TextButton",MF);
 IVB.Size,IVB.Position,IVB.Text,IVB.TextColor3,IVB.TextSize,IVB.Font,IVB.BackgroundColor3,IVB.BorderSizePixel=UDim2.new(1,-20,0,38),UDim2.new(0,10,1,-50),"👻 TÀNG HÌNH: TẮT",Color3.fromRGB(255,255,255),12,Enum.Font.GothamBold,Color3.fromRGB(220,40,40),0;
 local IVBC=Instance.new("UICorner",IVB);IVBC.CornerRadius=UDim.new(0,8);
@@ -84,7 +86,7 @@ P.PlayerRemoving:Connect(function(p)
 end);
 refList();
 
--- Xử lý tính năng Bám Theo (Lock Target)
+-- Xử lý Bám Theo
 TB.MouseButton1Click:Connect(function()
     isF=not isF;
     if isF then 
@@ -122,7 +124,7 @@ TB.MouseButton1Click:Connect(function()
     end 
 end)
 
--- Xử lý tính năng Tàng Hình (Invisibility)
+-- Xử lý Tàng Hình
 IVB.MouseButton1Click:Connect(function()
     isInv = not isInv;
     local char = LP.Character;
@@ -131,24 +133,20 @@ IVB.MouseButton1Click:Connect(function()
     if isInv then
         IVB.Text, IVB.BackgroundColor3 = "👻 TÀNG HÌNH: BẬT", Color3.fromRGB(40,200,80);
         
-        -- Ẩn tên trên đầu nhân vật (BillboardGui / Humanoid DisplayName)
         local humanoid = char:FindFirstChildOfClass("Humanoid");
         if humanoid then
             humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None;
         end
         
-        -- Vòng lặp duy trì ẩn mọi bộ phận, phụ kiện đối với người khác nhưng hiện 40% (mờ 60%) cho chính mình
         invConn = RS.RenderStepped:Connect(function()
             if not isInv or not LP.Character then return; end;
             for _, obj in ipairs(LP.Character:GetDescendants()) do
                 if obj:IsA("BasePart") then
                     if obj.Name == "HumanoidRootPart" then
-                        obj.Transparency = 1; -- Ẩn hoàn toàn gốc di chuyển
+                        obj.Transparency = 1;
                         obj.CanCollide = false;
                     else
-                        -- Đối với bạn: Thấy mờ mờ (Transparency = 0.6 tương ứng hiện 40%). 
-                        -- Lưu ý: Trong Roblox, Transparency cục bộ hiển thị cho mình, các người chơi khác sẽ không thể render thấy bất kỳ phần nào nếu server/client đồng bộ mesh hoặc không bật CanCollide/đúng cấu trúc, hoặc bạn có thể chỉnh về 1 hoàn toàn nếu muốn tuyệt đối ẩn cả với mình. Ở đây để 0.6 theo ý bạn là hiển thị 60% cho góc nhìn của bạn.
-                        obj.Transparency = 0.6; 
+                        obj.Transparency = 0.6; -- Hiển thị mờ 60% cho chính bạn dễ nhìn
                     end
                 elseif obj:IsA("Accessory") then
                     local handle = obj:FindFirstChild("Handle");
@@ -167,14 +165,13 @@ IVB.MouseButton1Click:Connect(function()
             humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.Viewer;
         end
         
-        -- Khôi phục trạng thái hiển thị bình thường
         for _, obj in ipairs(char:GetDescendants()) do
             if obj:IsA("BasePart") then
                 if obj.Name == "HumanoidRootPart" then
                     obj.Transparency = 1;
                     obj.CanCollide = true;
                 else
-                    obj.Transparency = 0; -- Khôi phục hiển thị 100%
+                    obj.Transparency = 0;
                 end
             elseif obj:IsA("Accessory") then
                 local handle = obj:FindFirstChild("Handle");
